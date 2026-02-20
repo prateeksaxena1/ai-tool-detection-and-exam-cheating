@@ -1,333 +1,371 @@
-/* Login specific styles */
-.login-container {
-    display: flex;
-    min-height: 100vh;
-    width: 100vw;
+/* =============================================
+   LOGIN PAGE — Sliding Panel Layout
+   ============================================= */
+
+/* Full-page wrapper */
+.login-wrapper {
     background-color: var(--bg-color);
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(97, 91, 255, 0.05) 0%, transparent 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: var(--font-family);
 }
 
-.login-left {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 10%;
+/* Main card container */
+.container {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     position: relative;
     overflow: hidden;
-}
-
-/* Constellation background effect */
-.login-left::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 85% 30%, rgba(97, 91, 255, 0.03) 0%, transparent 50%);
-    z-index: 0;
-}
-
-/* We'll simulate the constellation lines using a background svg or CSS pattern. 
-   For now, a subtle glowing backdrop */
-
-.login-content {
-    position: relative;
-    z-index: 1;
-    max-width: 500px;
-}
-
-.brand-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 60px;
-}
-
-.brand-icon {
-    width: 40px;
-    height: 40px;
-    background-color: var(--primary-accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--bg-color);
-}
-
-.brand-name {
-    font-size: 24px;
-    font-weight: 700;
-    color: white;
-}
-
-.login-heading {
-    font-size: 56px;
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 30px;
-    letter-spacing: -1px;
-}
-
-.login-heading .gradient-text {
-    color: var(--primary-accent);
-}
-
-.login-subtitle {
-    font-size: 18px;
-    color: var(--text-secondary);
-    font-weight: 400;
-    margin-bottom: 60px;
-}
-
-.pagination-dots {
-    display: flex;
-    gap: 8px;
-}
-
-.dot {
-    width: 24px;
-    height: 4px;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background-color: var(--primary-accent);
-    width: 40px;
-}
-
-.login-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.login-box {
-    width: 100%;
-    max-width: 440px;
-    padding: 48px;
-    background: rgba(18, 22, 33, 0.6);
+    width: 900px;
+    max-width: 95vw;
+    min-height: 560px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-.form-header {
-    margin-bottom: 40px;
+/* =============================================
+   TYPOGRAPHY
+   ============================================= */
+.container h1 {
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 6px;
 }
 
-.form-header h2 {
-    font-size: 28px;
-    font-weight: 600;
-    color: white;
-    margin-bottom: 8px;
-}
-
-.form-header p {
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.form-group {
-    margin-bottom: 24px;
-}
-
-.form-group label {
-    display: block;
+.subtitle {
     font-size: 13px;
-    font-weight: 500;
-    color: #E2E8F0;
-    margin-bottom: 8px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 14px 16px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: white;
-    font-family: var(--font-family);
-    font-size: 15px;
-    transition: all 0.2s ease;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--primary-accent);
-    background-color: rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
-}
-
-.form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.2);
-}
-
-.password-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.password-header label {
-    margin-bottom: 0;
-}
-
-.forgot-link {
-    font-size: 13px;
-    color: var(--primary-accent);
-    font-weight: 500;
-}
-
-.forgot-link:hover {
-    text-decoration: underline;
-}
-
-.remember-me {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 32px;
-}
-
-.remember-me input[type="checkbox"] {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    position: relative;
-}
-
-.remember-me input[type="checkbox"]:checked {
-    background-color: var(--primary-accent);
-    border-color: var(--primary-accent);
-}
-
-.remember-me input[type="checkbox"]:checked::after {
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 2px;
-    width: 4px;
-    height: 8px;
-    border: solid #000;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-.remember-me label {
-    font-size: 14px;
     color: var(--text-secondary);
-    cursor: pointer;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 32px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 229, 255, 0.3);
-}
-
-.divider {
-    display: flex;
-    align-items: center;
+    margin-bottom: 22px;
     text-align: center;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 12px;
-    font-weight: 500;
+}
+
+.container p {
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.container a {
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-decoration: none;
+    margin: 8px 0;
+    transition: color 0.3s ease;
+}
+
+.container a:hover {
+    color: var(--primary-accent);
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.primary-action-btn {
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    color: #fff;
+    padding: 12px 48px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 32px;
+    margin-top: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25);
+    transition: all 0.3s ease;
 }
 
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.primary-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 229, 255, 0.4);
 }
 
-.divider::before {
-    margin-right: 16px;
+.hidden-btn {
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    padding: 10px 45px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.divider::after {
-    margin-left: 16px;
+.hidden-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
 }
 
-.btn-outline {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 15px;
-    font-weight: 500;
+/* =============================================
+   FORM PANELS
+   Both panels sit side by side inside the card.
+   The left 50% = sign-in, right 50% = sign-up.
+   When active, sign-in slides right; sign-up
+   slides into position from the left.
+   ============================================= */
+
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transition: all 0.6s ease-in-out;
+}
+
+.form-container form {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    transition: all 0.2s ease;
-    margin-bottom: 32px;
+    flex-direction: column;
+    padding: 40px 50px;
+    height: 100%;
 }
 
-.btn-outline:hover {
-    background: rgba(255, 255, 255, 0.05);
+/* ── Sign-In (default: left half, visible) ── */
+.sign-in {
+    left: 0;
+    z-index: 2;
+    opacity: 1;
 }
 
-.create-account {
-    text-align: center;
+/* When active → sign-in slides fully off to the right */
+.container.active .sign-in {
+    transform: translateX(100%);
+    opacity: 0;
+    z-index: 1;
+}
+
+/* ── Sign-Up (default: also starts left, hidden behind) ── */
+.sign-up {
+    left: 0;
+    z-index: 1;
+    opacity: 0;
+    /* Initially transparent so it doesn't bleed through */
+}
+
+/* When active → sign-up slides into the right half and becomes visible */
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: fadeInPanel 0.6s ease-in-out forwards;
+}
+
+@keyframes fadeInPanel {
+    0% {
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* =============================================
+   FORM INPUTS
+   ============================================= */
+.form-container input {
+    background-color: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    margin: 7px 0;
+    padding: 12px 16px;
     font-size: 14px;
-    color: var(--text-secondary);
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.create-account a {
+.form-container input:focus {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.12);
+}
+
+.form-container input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Face recognition button */
+.face-recognition {
+    margin: 14px 0 4px;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
     color: var(--primary-accent);
-    font-weight: 600;
-    margin-left: 6px;
+    cursor: pointer;
+    background-color: rgba(0, 229, 255, 0.05);
+    transition: all 0.3s ease;
 }
 
-.create-account a:hover {
-    text-decoration: underline;
+.face-recognition:hover {
+    background-color: rgba(0, 229, 255, 0.12);
+    border-color: var(--primary-accent);
 }
 
-@media (max-width: 992px) {
-    .login-container {
-        flex-direction: column;
+.face-recognition span {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.forgot-password {
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+/* =============================================
+   TOGGLE / OVERLAY PANEL
+   Sits on the right half by default.
+   Slides to the left half when active.
+   ============================================= */
+
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    /* starts on the RIGHT half */
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1000;
+    transition: all 0.6s ease-in-out;
+    /* pill edge facing left */
+    border-radius: 150px 0 0 150px;
+}
+
+.container.active .toggle-container {
+    /* slides LEFT to occupy left half */
+    transform: translateX(-100%);
+    border-radius: 0 150px 150px 0;
+}
+
+.toggle {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.85) 0%, rgba(97, 91, 255, 0.9) 100%);
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    transition: all 0.6s ease-in-out;
+}
+
+/* Left toggle panel: "Welcome Back" — hidden far left initially */
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+
+/* Right toggle panel: "New to ProctorAI?" — visible initially */
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.active .toggle-right {
+    transform: translateX(200%);
+}
+
+/* =============================================
+   UTILITY
+   ============================================= */
+.hidden {
+    display: none !important;
+}
+
+.otp-section {
+    width: 100%;
+}
+
+/* =============================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   Stack forms vertically, hide sliding panel.
+   ============================================= */
+@media (max-width: 768px) {
+
+    .container {
+        min-height: unset;
+        border-radius: 20px;
+        width: 95vw;
     }
 
-    .login-left {
-        padding: 40px 24px;
-        flex: none;
+    /* Hide the toggle overlay on mobile */
+    .toggle-container {
+        display: none;
     }
 
-    .login-right {
-        padding: 24px;
-        align-items: flex-start;
+    /* Both forms become full-width stacked blocks */
+    .form-container {
+        position: relative;
+        width: 100%;
+        height: auto;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .form-container form {
+        padding: 30px 24px;
+    }
+
+    /* Divider between sign-in and sign-up on mobile */
+    .sign-up {
+        border-top: 1px solid var(--border-color);
+    }
+
+    /* Override active-state transforms so nothing slides */
+    .container.active .sign-in,
+    .container.active .sign-up {
+        transform: none;
+        opacity: 1;
+    }
+
+    .container h1 {
+        font-size: 1.4rem;
     }
 }
