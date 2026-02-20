@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Camera, RotateCcw, AlertCircle, CheckCircle2 } from 'lucide-react';
 import '../styles/verification.css';
 
 const FaceVerification = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const videoRef = useRef(null);
+    const canvasRef = useRef(null);
     const [stream, setStream] = useState(null);
+
+    // Determine the context flow: 'register' or 'authenticate' (default to authenticate)
+    const flowContext = location.state?.flow || 'authenticate';
+
     const [status, setStatus] = useState('initializing'); // initializing, active, error, captured
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -44,13 +52,47 @@ const FaceVerification = () => {
     }, []);
 
     const handleCapture = () => {
-        if (status === 'active') {
+        if (status === 'active' && videoRef.current && canvasRef.current) {
             setStatus('captured');
-            // For a real app, you would draw the video frame to a canvas here and get the data URL
+
+            // Set canvas dimensions to match the video feed
+            const video = videoRef.current;
+            const canvas = canvasRef.current;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw the current video frame onto the hidden canvas
+            const context = canvas.getContext('2d');
+            // If the video is mirrored via CSS scaleX(-1), we should mirror the capture too
+            context.translate(canvas.width, 0);
+            context.scale(-1, 1);
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to a base64 PNG data URL
+            const imageDataUrl = canvas.toDataURL('image/png');
+
+            // Trigger automatic download
+            const link = document.createElement('a');
+            link.href = imageDataUrl;
+            const timestamp = Math.floor(Date.now() / 1000);
+            link.download = `${flowContext}_face_${timestamp}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Halt the camera feed
             stopCamera();
+
+            // Provide feedback and route
             setTimeout(() => {
-                alert("Face successfully captured! Proceeding to exam...");
-                // navigate('/dashboard') or similar
+                alert(`Face successfully captured & downloaded! Flow: ${flowContext.toUpperCase()}`);
+                if (flowContext === 'register') {
+                    navigate('/login');
+                } else {
+                    // Start test flow
+                    alert('Proceeding to exam environment...');
+                    navigate('/dashboard'); // Or direct exam route
+                }
             }, 1000);
         }
     };
@@ -105,6 +147,9 @@ const FaceVerification = () => {
                             className={`w-full h-full object-cover rounded-lg ${status !== 'active' ? 'hidden' : ''}`}
                             style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }}
                         />
+
+                        {/* Hidden Canvas for Capture */}
+                        <canvas ref={canvasRef} style={{ display: 'none' }} />
 
                         {/* Overlays based on status */}
                         {status === 'initializing' && (

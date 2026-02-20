@@ -1,11 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     ShieldCheck, LayoutDashboard, Video, Users, FileText, Settings,
-    Search, Bell, Eye, AlertTriangle, BarChart2
+    Search, Bell, Eye, AlertTriangle, BarChart2, CheckCircle2, Download, Plus, X, BookOpen, Clock, ArrowLeft
 } from 'lucide-react';
+import { mockUsers, mockTests, generateCSVLog } from '../data/mockData';
 import '../styles/dashboard.css';
+import '../styles/admin.css';
+import '../styles/test-cards.css';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [testForm, setTestForm] = useState({ name: '', date: '', duration: '', limit: '' });
+    const [selectedTest, setSelectedTest] = useState(null);
+    const [activeTab, setActiveTab] = useState('CURRENT');
+    const [tests, setTests] = useState(mockTests);
+
+    // Read the role passed from Login navigate state. Ensure strict fallback to 'student'
+    const role = location.state?.role === 'admin' ? 'admin' : 'student';
+
+    // Optional: Log the recognized role for debugging
+    useEffect(() => {
+        console.log("Dashboard initialized with role:", role);
+    }, [role]);
+
+    const handleCreateTest = (e) => {
+        e.preventDefault();
+
+        const newTestId = `t - ${Date.now()} `;
+        const newTest = {
+            id: newTestId,
+            name: testForm.name,
+            date: testForm.date,
+            endDate: testForm.date, // Simplifying for this form
+            duration: testForm.duration,
+            candidatesEnrolled: 0,
+            status: 'UPCOMING', // newly created tests are upcoming
+            assessments: 0,
+            assignments: 0,
+            handsOn: 0
+        };
+
+        setTests([...tests, newTest]);
+        setIsModalOpen(false);
+        setTestForm({ name: '', date: '', duration: '', limit: '' });
+        setActiveTab('UPCOMING'); // Switch tab to see exactly what we just made
+    };
+
     return (
         <div className="dashboard-layout">
             {/* Sidebar */}
@@ -86,11 +129,12 @@ const Dashboard = () => {
                     {/* Welcome Hero */}
                     <div className="welcome-hero">
                         <div className="welcome-info">
-                            <h1>Welcome back, Examiner</h1>
-                            <p>Your AI Proctor is currently analyzing <span className="highlight-text">1,284 sessions</span> across 4 continents. Everything is running smoothly.</p>
+                            <h1>Welcome back, {role === 'admin' ? 'Admin' : 'Student'}</h1>
+                            <p>{role === 'admin'
+                                ? 'Global monitoring is active across all ongoing test sessions. System running smoothly.'
+                                : 'Your secure examination environment is ready. Select an upcoming test to begin verification.'}</p>
                             <div className="welcome-actions">
-                                <button className="btn-cyan">View Live Stream</button>
-                                <button className="btn-outline-dark">Export Logs</button>
+                                {role === 'admin' && <button className="btn-outline-dark">Export Logs</button>}
                             </div>
                         </div>
                         <div className="radar-wrapper">
@@ -102,117 +146,338 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="stats-grid">
-                        <div className="stat-card">
-                            <div className="stat-header">
-                                <div className="stat-icon cyan">
-                                    <Users size={20} />
-                                </div>
-                                <div className="stat-badge green">+12%</div>
-                            </div>
-                            <div className="stat-title">Total Candidates</div>
-                            <div className="stat-value">42,892</div>
-                        </div>
 
-                        <div className="stat-card">
-                            <div className="stat-header">
-                                <div className="stat-icon purple">
-                                    <Eye size={20} />
-                                </div>
-                                <div className="stat-badge cyan">Live Now</div>
-                            </div>
-                            <div className="stat-title">Live Exams</div>
-                            <div className="stat-value">1,284</div>
-                        </div>
 
-                        <div className="stat-card">
-                            <div className="stat-header">
-                                <div className="stat-icon red">
-                                    <AlertTriangle size={20} />
-                                </div>
-                                <div className="stat-badge red">Critical</div>
+                    {/* Dynamic View: Tests List OR Candidates Data Table */}
+                    {!selectedTest ? (
+                        <div className="tests-section">
+                            <div className="tests-tabs">
+                                <button className={`tests - tab ${activeTab === 'CURRENT' ? 'active' : ''} `} onClick={() => setActiveTab('CURRENT')}>
+                                    CURRENT ({tests.filter(t => t.status === 'CURRENT').length})
+                                </button>
+                                <button className={`tests - tab ${activeTab === 'COMPLETED' ? 'active' : ''} `} onClick={() => setActiveTab('COMPLETED')}>
+                                    COMPLETED ({tests.filter(t => t.status === 'COMPLETED').length})
+                                </button>
+                                <button className={`tests - tab ${activeTab === 'UPCOMING' ? 'active' : ''} `} onClick={() => setActiveTab('UPCOMING')}>
+                                    UPCOMING ({tests.filter(t => t.status === 'UPCOMING').length})
+                                </button>
+                                <button className={`tests - tab ${activeTab === 'EXPIRED' ? 'active' : ''} `} onClick={() => setActiveTab('EXPIRED')}>
+                                    EXPIRED ({tests.filter(t => t.status === 'EXPIRED').length})
+                                </button>
                             </div>
-                            <div className="stat-title">Flags Detected</div>
-                            <div className="stat-value">48</div>
-                        </div>
 
-                        <div className="stat-card">
-                            <div className="stat-header">
-                                <div className="stat-icon yellow">
-                                    <BarChart2 size={20} />
+                            <div className="tests-toolbar">
+                                <div className="search-input-wrapper">
+                                    <Search size={16} color="#9098A9" />
+                                    <input type="text" placeholder="Search for a Course" />
                                 </div>
-                                <div className="stat-badge gray">Global Avg</div>
-                            </div>
-                            <div className="stat-title">Avg Risk Score</div>
-                            <div className="stat-value">12.4%</div>
-                        </div>
-                    </div>
+                                <div className="filter-dropdown">
+                                    Type:
+                                    <select>
+                                        <option>All</option>
+                                    </select>
+                                </div>
+                                <div className="filter-dropdown">
+                                    Sort:
+                                    <select>
+                                        <option>Recently Added</option>
+                                    </select>
+                                </div>
 
-                    {/* Charts Section */}
-                    <div className="charts-section">
-                        {/* Activity Chart */}
-                        <div className="chart-card">
-                            <div className="chart-header">
-                                <div className="chart-title">
-                                    <h3>Monitoring Activity</h3>
-                                    <p>Activity logs for the last 24 hours</p>
-                                </div>
-                                <div className="chart-toggle">
-                                    <button className="toggle-btn active">Day</button>
-                                    <button className="toggle-btn">Week</button>
-                                </div>
+                                {role === 'admin' && (
+                                    <button className="btn-cyan" style={{ marginLeft: 'auto', padding: '8px 16px', borderRadius: '8px' }} onClick={() => setIsModalOpen(true)}>
+                                        <Plus size={16} strokeWidth={2.5} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                        Create Test
+                                    </button>
+                                )}
                             </div>
-                            <div className="bar-chart">
-                                <div className="bar-col" style={{ height: '40%' }}></div>
-                                <div className="bar-col" style={{ height: '30%' }}></div>
-                                <div className="bar-col" style={{ height: '50%' }}></div>
-                                <div className="bar-col" style={{ height: '60%' }}></div>
-                                <div className="bar-col" style={{ height: '45%' }}></div>
-                                <div className="bar-col" style={{ height: '20%' }}></div>
-                                <div className="bar-col" style={{ height: '35%' }}></div>
-                                <div className="bar-col" style={{ height: '50%' }}></div>
-                                <div className="bar-col active" style={{ height: '80%' }}></div>
-                                <div className="bar-col" style={{ height: '40%' }}></div>
-                            </div>
-                            <div className="chart-x-axis">
-                                <span>00:00</span>
-                                <span>06:00</span>
-                                <span>12:00</span>
-                                <span>18:00</span>
-                                <span>NOW</span>
+
+                            <div className="tests-grid">
+                                {tests.filter(t => t.status === activeTab).map(test => (
+                                    <div key={test.id} className="test-card">
+                                        <div className="test-card-header">
+                                            <div className="test-card-icon">
+                                                <BookOpen size={24} color="white" />
+                                            </div>
+                                            <h4 className="test-card-title">{test.name}</h4>
+                                        </div>
+                                        <div className="test-card-stats">
+                                            <div className="test-stat-col">
+                                                <span className="test-stat-val">{test.handsOn} Hands-on</span>
+                                                <span className="test-stat-label">0 Pending</span>
+                                            </div>
+                                            <div className="test-stat-col">
+                                                <span className="test-stat-val">{test.assessments} Assessment(s)</span>
+                                                <span className="test-stat-label">1 Pending</span>
+                                            </div>
+                                            <div className="test-stat-col">
+                                                <span className="test-stat-val">{test.assignments} Assignment(s)</span>
+                                                <span className="test-stat-label">0 Pending</span>
+                                            </div>
+                                        </div>
+                                        <div className="test-card-footer">
+                                            <div>Regular | Start {test.date} - {test.endDate}</div>
+                                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                <Clock size={14} />
+                                                <button className="launch-btn" onClick={() => {
+                                                    if (role === 'admin') {
+                                                        setSelectedTest(test);
+                                                    } else {
+                                                        navigate('/verification', { state: { flow: 'authenticate', testId: test.id } });
+                                                    }
+                                                }}>
+                                                    {role === 'admin' ? 'VIEW' : 'START VERIFICATION'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
+                    ) : (
+                        <div className="candidates-section" style={{ background: 'transparent', padding: '0', border: 'none', margin: '0' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <h2>{selectedTest.name} Overview</h2>
+                                <button className="back-btn" onClick={() => setSelectedTest(null)} style={{ margin: '0' }}>
+                                    <ArrowLeft size={16} /> Back to Tests
+                                </button>
+                            </div>
 
-                        {/* Risk Index Donut */}
-                        <div className="chart-card">
-                            <div className="chart-header">
-                                <div className="chart-title" style={{ textAlign: "center", width: "100%", textTransform: "uppercase", letterSpacing: "1px" }}>
-                                    <h3>Global Risk Index</h3>
+                            {/* Stats Grid */}
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <div className="stat-header">
+                                        <div className="stat-icon cyan">
+                                            <Users size={20} />
+                                        </div>
+                                        <div className="stat-badge green">+12%</div>
+                                    </div>
+                                    <div className="stat-title">Total Candidates</div>
+                                    <div className="stat-value">{selectedTest.candidatesEnrolled}</div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-header">
+                                        <div className="stat-icon purple">
+                                            <Eye size={20} />
+                                        </div>
+                                        <div className="stat-badge cyan">Live Now</div>
+                                    </div>
+                                    <div className="stat-title">Live Exams</div>
+                                    <div className="stat-value">{Math.floor(selectedTest.candidatesEnrolled * 0.3)}</div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-header">
+                                        <div className="stat-icon red">
+                                            <AlertTriangle size={20} />
+                                        </div>
+                                        <div className="stat-badge red">Critical</div>
+                                    </div>
+                                    <div className="stat-title">Flags Detected</div>
+                                    <div className="stat-value">48</div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-header">
+                                        <div className="stat-icon yellow">
+                                            <BarChart2 size={20} />
+                                        </div>
+                                        <div className="stat-badge gray">Global Avg</div>
+                                    </div>
+                                    <div className="stat-title">Avg Risk Score</div>
+                                    <div className="stat-value">12.4%</div>
                                 </div>
                             </div>
-                            <div className="doughnut-container">
-                                <div className="doughnut">
-                                    <div className="doughnut-inner">
-                                        <div className="doughnut-value">24<span>%</span></div>
-                                        <div className="doughnut-label">Moderate Risk</div>
+
+                            {/* Charts Section */}
+                            <div className="charts-section">
+                                {/* Activity Chart */}
+                                <div className="chart-card">
+                                    <div className="chart-header">
+                                        <div className="chart-title">
+                                            <h3>Monitoring Activity</h3>
+                                            <p>Activity logs for the last 24 hours</p>
+                                        </div>
+                                        <div className="chart-toggle">
+                                            <button className="toggle-btn active">Day</button>
+                                            <button className="toggle-btn">Week</button>
+                                        </div>
+                                    </div>
+                                    <div className="bar-chart">
+                                        <div className="bar-col" style={{ height: '40%' }}></div>
+                                        <div className="bar-col" style={{ height: '30%' }}></div>
+                                        <div className="bar-col" style={{ height: '50%' }}></div>
+                                        <div className="bar-col" style={{ height: '60%' }}></div>
+                                        <div className="bar-col" style={{ height: '45%' }}></div>
+                                        <div className="bar-col" style={{ height: '20%' }}></div>
+                                        <div className="bar-col" style={{ height: '35%' }}></div>
+                                        <div className="bar-col" style={{ height: '50%' }}></div>
+                                        <div className="bar-col active" style={{ height: '80%' }}></div>
+                                        <div className="bar-col" style={{ height: '40%' }}></div>
+                                    </div>
+                                    <div className="chart-x-axis">
+                                        <span>00:00</span>
+                                        <span>06:00</span>
+                                        <span>12:00</span>
+                                        <span>18:00</span>
+                                        <span>NOW</span>
                                     </div>
                                 </div>
-                                <div className="doughnut-legend">
-                                    <div className="legend-item">
-                                        <span className="legend-label">Safe</span>
-                                        <span className="legend-val">76%</span>
+
+                                {/* Risk Index Donut */}
+                                <div className="chart-card">
+                                    <div className="chart-header">
+                                        <div className="chart-title" style={{ textAlign: "center", width: "100%", textTransform: "uppercase", letterSpacing: "1px" }}>
+                                            <h3>Global Risk Index</h3>
+                                        </div>
                                     </div>
-                                    <div className="legend-item" style={{ alignItems: "flex-end" }}>
-                                        <span className="legend-label">Violations</span>
-                                        <span className="legend-val red">3.2%</span>
+                                    <div className="doughnut-container">
+                                        <div className="doughnut">
+                                            <div className="doughnut-inner">
+                                                <div className="doughnut-value">24<span>%</span></div>
+                                                <div className="doughnut-label">Moderate Risk</div>
+                                            </div>
+                                        </div>
+                                        <div className="doughnut-legend">
+                                            <div className="legend-item">
+                                                <span className="legend-label">Safe</span>
+                                                <span className="legend-val">76%</span>
+                                            </div>
+                                            <div className="legend-item" style={{ alignItems: "flex-end" }}>
+                                                <span className="legend-label">Violations</span>
+                                                <span className="legend-val red">3.2%</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="candidates-section" style={{ marginTop: '24px' }}>
+                                <div className="table-header">
+                                    <h3>Registered Candidates</h3>
+                                    <div className="search-bar" style={{ width: '250px' }}>
+                                        <Search size={16} color="#9098A9" />
+                                        <input type="text" placeholder="Search students..." />
+                                    </div>
+                                </div>
+                                <table className="candidates-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Candidate</th>
+                                            <th>Assigned Test</th>
+                                            <th>Status / Risk</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {mockUsers.map(user => (
+                                            <tr key={user.id} className="table-row">
+                                                <td className="candidate-cell">
+                                                    <img src={user.avatar} alt={user.name} className="candidate-avatar" />
+                                                    <div className="candidate-info">
+                                                        <span className="candidate-name">{user.name}</span>
+                                                        <span className="candidate-email">{user.email}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className="test-badge">{user.testAssigned}</span>
+                                                </td>
+                                                <td>
+                                                    <span className={`stat - badge ${user.status === 'active' ? 'green' :
+                                                        user.status === 'flagged' ? 'red' :
+                                                            user.status === 'completed' ? 'cyan' : 'gray'
+                                                        } `} style={{ display: 'inline-block', marginBottom: '4px' }}>
+                                                        {user.status.toUpperCase()}
+                                                    </span>
+                                                    {user.status !== 'idle' && (
+                                                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                                                            Risk: <span style={{ color: user.status === 'flagged' ? '#EF4444' : 'inherit' }}>{user.riskScore}</span>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <a
+                                                        href={generateCSVLog(user)}
+                                                        download={`log_${user.id}_${new Date().toISOString().split('T')[0]}.csv`}
+                                                        className="csv-btn"
+                                                    >
+                                                        <Download size={16} /> Live CSV
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </main>
+
+            {/* Create Test Modal */}
+            <div className={`modal - overlay ${isModalOpen ? 'open' : ''} `}>
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h2>Create New Test</h2>
+                        <button className="close-btn" onClick={() => setIsModalOpen(false)}>
+                            <X size={24} />
+                        </button>
+                    </div>
+                    <form onSubmit={handleCreateTest}>
+                        <div className="modal-body">
+                            <div className="form-group">
+                                <label>Test Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. JEE Mains Mock 2026"
+                                    required
+                                    value={testForm.name}
+                                    onChange={(e) => setTestForm({ ...testForm, name: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-group-row">
+                                <div className="form-group">
+                                    <label>Date</label>
+                                    <input
+                                        type="date"
+                                        required
+                                        value={testForm.date}
+                                        onChange={(e) => setTestForm({ ...testForm, date: e.target.value })}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Duration (mins)</label>
+                                    <input
+                                        type="number"
+                                        placeholder="180"
+                                        required
+                                        value={testForm.duration}
+                                        onChange={(e) => setTestForm({ ...testForm, duration: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label>Candidate Limit</label>
+                                <input
+                                    type="number"
+                                    placeholder="Optional"
+                                    value={testForm.limit}
+                                    onChange={(e) => setTestForm({ ...testForm, limit: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>
+                                Cancel
+                            </button>
+                            <button type="submit" className="btn-cyan" style={{ border: 'none' }}>
+                                Create Test
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 };

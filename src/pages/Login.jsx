@@ -18,6 +18,7 @@ const Login = () => {
     const [signupName, setSignupName] = useState('');
     const [signupEmail, setSignupEmail] = useState('');
     const [signupPassword, setSignupPassword] = useState('');
+    const [signupRole, setSignupRole] = useState('student'); // Default role
     const [signupError, setSignupError] = useState('');
     const [signupSuccess, setSignupSuccess] = useState('');
 
@@ -40,7 +41,12 @@ const Login = () => {
         }
 
         if (data?.user) {
-            navigate('/dashboard');
+            // Check metadata if set, else fallback. For demo purposes, check email.
+            let userRole = data.user.user_metadata?.role;
+            if (!userRole) {
+                userRole = loginEmail.includes('admin') ? 'admin' : 'student';
+            }
+            navigate('/dashboard', { state: { role: userRole } });
         }
     };
 
@@ -55,7 +61,7 @@ const Login = () => {
             email: signupEmail,
             password: signupPassword,
             options: {
-                data: { full_name: signupName },
+                data: { full_name: signupName, role: signupRole },
             },
         });
 
@@ -70,11 +76,10 @@ const Login = () => {
         // If email confirmations are disabled, data.user will be set immediately.
         if (data?.user && data.user.identities?.length === 0) {
             setSignupError('This email is already registered. Please sign in instead.');
-        } else {
-            setSignupSuccess('Account created! Check your email to confirm your account.');
-            setSignupName('');
-            setSignupEmail('');
-            setSignupPassword('');
+        } else if (data?.user) {
+            setSignupSuccess('Account created! Routing to dashboard...');
+            // Immediately route to the dashboard with the explicitly chosen role
+            navigate('/dashboard', { state: { role: signupRole } });
         }
     };
 
@@ -133,6 +138,21 @@ const Login = () => {
                             minLength={6}
                             disabled={loading}
                         />
+
+                        <select
+                            value={signupRole}
+                            onChange={(e) => setSignupRole(e.target.value)}
+                            required
+                            disabled={loading}
+                            style={{
+                                backgroundColor: 'var(--panel-bg)', width: '100%', padding: '12px 15px',
+                                margin: '8px 0', border: '1px solid var(--border-color)', borderRadius: '8px',
+                                color: 'white', fontFamily: 'inherit'
+                            }}
+                        >
+                            <option value="student">Student</option>
+                            <option value="admin">Administrator</option>
+                        </select>
 
                         {/* Error / Success messages */}
                         {signupError && <p className="auth-error">{signupError}</p>}
