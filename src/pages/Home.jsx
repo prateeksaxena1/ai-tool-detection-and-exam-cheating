@@ -78,6 +78,7 @@ const Home = () => {
             {/* Problem Section */}
             <section id="problem" className="problem-section">
                 <div className="section-header">
+                    <span className="section-tag">The Problem</span>
                     <h2 className="section-title">The Challenge in Online Exams</h2>
                     <p className="section-description">Traditional online exams face critical vulnerabilities without human oversight.</p>
                 </div>
@@ -112,7 +113,8 @@ const Home = () => {
             {/* Solution Section */}
             <section id="solution" className="solution-section">
                 <div className="section-header">
-                    <h2 className="section-title">Our <span className="highlight">AI-Based</span> Solution</h2>
+                    <span className="section-tag">Our Solution</span>
+                    <h2 className="section-title">Built on <span className="highlight">Intelligent</span> Detection</h2>
                     <p className="section-description">A comprehensive suite of automated detection tools to secure every exam session.</p>
                 </div>
 
@@ -152,6 +154,7 @@ const Home = () => {
             {/* How It Works (Flow Section) */}
             <section id="how-it-works" className="flow-section">
                 <div className="section-header">
+                    <span className="section-tag">Process</span>
                     <h2 className="section-title">How It Works</h2>
                     <p className="section-description">Seamless integration from candidate login to proctor review.</p>
                 </div>
@@ -235,8 +238,8 @@ const Home = () => {
                             <div className="node n4"></div>
                             <div className="node n5"></div>
                             <svg className="connecting-lines" viewBox="0 0 200 200">
-                                <path d="M50,150 L100,100 L150,120 L180,60" fill="none" stroke="rgba(59, 130, 246, 0.4)" strokeWidth="2" />
-                                <path d="M100,100 L120,40" fill="none" stroke="rgba(59, 130, 246, 0.4)" strokeWidth="2" />
+                                <path d="M50,150 L100,100 L150,120 L180,60" fill="none" stroke="rgba(143, 117, 94, 0.4)" strokeWidth="1.5" />
+                                <path d="M100,100 L120,40" fill="none" stroke="rgba(143, 117, 94, 0.4)" strokeWidth="1.5" />
                             </svg>
                         </div>
                     </div>

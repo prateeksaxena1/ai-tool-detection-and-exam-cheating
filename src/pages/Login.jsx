@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ScanFace, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import '../styles/login.css';
 
@@ -138,11 +138,6 @@ const Login = () => {
                         {signupError && <p className="auth-error">{signupError}</p>}
                         {signupSuccess && <p className="auth-success">{signupSuccess}</p>}
 
-                        <div className="face-recognition" onClick={() => navigate('/verification')}>
-                            <ScanFace size={18} />
-                            <span>Register your Face</span>
-                        </div>
-
                         <button type="submit" className="primary-action-btn" disabled={loading}>
                             {loading ? <Loader2 size={18} className="spin" /> : 'Sign Up'}
                         </button>
@@ -174,11 +169,6 @@ const Login = () => {
 
                         {/* Error message */}
                         {loginError && <p className="auth-error">{loginError}</p>}
-
-                        <div className="face-recognition" onClick={() => navigate('/verification')}>
-                            <ScanFace size={18} />
-                            <span>Sign in with Face</span>
-                        </div>
 
                         <a href="#" className="forgot-password" onClick={handleForgotPassword}>
                             Forgot password?
