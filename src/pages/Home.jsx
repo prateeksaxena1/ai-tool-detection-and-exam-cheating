@@ -68,8 +68,8 @@ const Home = () => {
                         <button className="btn-primary" onClick={() => navigate('/verification')}>
                             Start Exam <ArrowRight className="btn-icon" />
                         </button>
-                        <button className="btn-secondary" onClick={() => navigate('/dashboard')}>
-                            View Dashboard
+                        <button className="btn-secondary" onClick={() => navigate('/login')}>
+                            Create Account
                         </button>
                     </div>
                 </div>
