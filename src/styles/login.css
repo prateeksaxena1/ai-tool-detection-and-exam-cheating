@@ -1,125 +1,149 @@
 /* =============================================
-   LOGIN PAGE — Sliding Panel Layout
+   LOGIN PAGE — White & Red Theme
    ============================================= */
 
-/* Full-page wrapper */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Palette tokens ── */
+:root {
+    --l-red: #C0162C;
+    --l-red-dark: #9E1124;
+    --l-red-soft: #F9E8EB;
+    --l-white: #FFFFFF;
+    --l-off: #F5F3F1;
+    --l-ink: #1A1A1A;
+    --l-ink-mid: #5A5A5A;
+    --l-ink-soft: #999999;
+    --l-border: rgba(0, 0, 0, 0.09);
+    --l-border-r: rgba(192, 22, 44, 0.25);
+    --l-shadow: 0 24px 80px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Full-page wrapper ── */
 .login-wrapper {
-    background-color: var(--bg-color);
+    background: var(--l-off);
     background-image:
-        radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 85% 30%, rgba(97, 91, 255, 0.05) 0%, transparent 50%);
+        radial-gradient(ellipse at 20% 30%, rgba(192, 22, 44, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(192, 22, 44, 0.04) 0%, transparent 50%);
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    font-family: var(--font-family);
+    font-family: 'Inter', -apple-system, sans-serif;
+    padding: 2rem 1rem;
 }
 
-/* Main card container */
+/* ── Main card ── */
 .container {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 30px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    background: var(--l-white);
+    border: 1px solid var(--l-border);
+    border-radius: 28px;
+    box-shadow: var(--l-shadow);
     position: relative;
     overflow: hidden;
-    width: 900px;
-    max-width: 95vw;
-    min-height: 560px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    width: 920px;
+    max-width: 96vw;
+    min-height: 580px;
 }
 
 /* =============================================
    TYPOGRAPHY
    ============================================= */
 .container h1 {
-    color: var(--text-primary);
-    font-size: 1.75rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    color: var(--l-ink);
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 6px;
-}
-
-.subtitle {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 22px;
     text-align: center;
 }
 
+.subtitle {
+    font-size: 12.5px;
+    color: var(--l-ink-soft);
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+
 .container p {
-    font-size: 14px;
-    line-height: 22px;
-    letter-spacing: 0.3px;
-    margin: 20px 0;
-    color: var(--text-secondary);
+    font-size: 13.5px;
+    line-height: 1.65;
+    margin: 16px 0;
+    color: var(--l-ink-mid);
     text-align: center;
 }
 
 .container a {
-    color: var(--text-secondary);
+    color: var(--l-ink-soft);
     font-size: 13px;
     text-decoration: none;
-    margin: 8px 0;
-    transition: color 0.3s ease;
+    transition: color 0.2s;
 }
 
 .container a:hover {
-    color: var(--primary-accent);
+    color: var(--l-red);
 }
 
 /* =============================================
    BUTTONS
    ============================================= */
 .primary-action-btn {
-    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    background: var(--l-red);
     color: #fff;
-    padding: 12px 48px;
+    padding: 12px 44px;
     border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
+    border-radius: 9px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin-top: 18px;
+    margin-top: 20px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25);
-    transition: all 0.3s ease;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(192, 22, 44, 0.28);
 }
 
 .primary-action-btn:hover {
+    background: var(--l-red-dark);
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 229, 255, 0.4);
+    box-shadow: 0 10px 30px rgba(192, 22, 44, 0.36);
 }
 
+.primary-action-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Toggle overlay button */
 .hidden-btn {
-    background-color: transparent;
+    background: transparent;
     color: #fff;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    padding: 10px 45px;
-    border-radius: 8px;
-    font-weight: 700;
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    padding: 10px 40px;
+    border-radius: 9px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
     font-size: 13px;
-    letter-spacing: 1px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin-top: 12px;
+    margin-top: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s;
 }
 
 .hidden-btn:hover {
-    background-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.15);
     border-color: #fff;
 }
 
 /* =============================================
    FORM PANELS
-   Both panels sit side by side inside the card.
-   The left 50% = sign-in, right 50% = sign-up.
-   When active, sign-in slides right; sign-up
-   slides into position from the left.
    ============================================= */
-
 .form-container {
     position: absolute;
     top: 0;
@@ -133,8 +157,20 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 40px 50px;
+    padding: 44px 48px;
     height: 100%;
+}
+
+/* Parchment rule above heading */
+.form-container form::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: var(--l-red);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    opacity: 0.6;
 }
 
 /* ── Sign-In (default: left half, visible) ── */
@@ -144,22 +180,19 @@
     opacity: 1;
 }
 
-/* When active → sign-in slides fully off to the right */
 .container.active .sign-in {
     transform: translateX(100%);
     opacity: 0;
     z-index: 1;
 }
 
-/* ── Sign-Up (default: also starts left, hidden behind) ── */
+/* ── Sign-Up ── */
 .sign-up {
     left: 0;
     z-index: 1;
     opacity: 0;
-    /* Initially transparent so it doesn't bleed through */
 }
 
-/* When active → sign-up slides into the right half and becomes visible */
 .container.active .sign-up {
     transform: translateX(100%);
     opacity: 1;
@@ -184,95 +217,98 @@
 /* =============================================
    FORM INPUTS
    ============================================= */
-.form-container input {
-    background-color: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    margin: 7px 0;
-    padding: 12px 16px;
-    font-size: 14px;
-    border-radius: 8px;
+.form-container input,
+.form-container select {
+    background: var(--l-off);
+    border: 1.5px solid var(--l-border);
+    color: var(--l-ink);
+    margin: 6px 0;
+    padding: 12px 15px;
+    font-size: 13.5px;
+    font-family: 'Inter', sans-serif;
+    border-radius: 9px;
     width: 100%;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
-.form-container input:focus {
-    border-color: var(--primary-accent);
-    box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.12);
+.form-container select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C0162C' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+}
+
+.form-container select option {
+    background: #fff;
+    color: #1A1A1A;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+    border-color: var(--l-red);
+    background: var(--l-white);
+    box-shadow: 0 0 0 3px rgba(192, 22, 44, 0.1);
 }
 
 .form-container input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-}
-
-/* Face recognition button */
-.face-recognition {
-    margin: 14px 0 4px;
-    padding: 10px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    color: var(--primary-accent);
-    cursor: pointer;
-    background-color: rgba(0, 229, 255, 0.05);
-    transition: all 0.3s ease;
-}
-
-.face-recognition:hover {
-    background-color: rgba(0, 229, 255, 0.12);
-    border-color: var(--primary-accent);
-}
-
-.face-recognition span {
-    font-size: 13px;
-    font-weight: 500;
+    color: #bbb;
 }
 
 .forgot-password {
     margin-top: 4px;
     font-size: 12px;
+    color: var(--l-ink-soft) !important;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: var(--l-red) !important;
 }
 
 /* =============================================
-   TOGGLE / OVERLAY PANEL
-   Sits on the right half by default.
-   Slides to the left half when active.
+   TOGGLE / OVERLAY PANEL  (red gradient)
    ============================================= */
-
 .toggle-container {
     position: absolute;
     top: 0;
     left: 50%;
-    /* starts on the RIGHT half */
     width: 50%;
     height: 100%;
     overflow: hidden;
     z-index: 1000;
     transition: all 0.6s ease-in-out;
-    /* pill edge facing left */
     border-radius: 150px 0 0 150px;
 }
 
 .container.active .toggle-container {
-    /* slides LEFT to occupy left half */
     transform: translateX(-100%);
     border-radius: 0 150px 150px 0;
 }
 
 .toggle {
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.85) 0%, rgba(97, 91, 255, 0.9) 100%);
+    background:
+        radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.18) 0%, transparent 55%),
+        linear-gradient(145deg, #C0162C 0%, #7A0D1C 100%);
     color: #fff;
     position: relative;
     left: -100%;
     height: 100%;
     width: 200%;
-    transform: translateX(0);
     transition: all 0.6s ease-in-out;
+}
+
+/* Dot pattern overlay */
+.toggle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
 }
 
 .container.active .toggle {
@@ -287,13 +323,38 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 0 40px;
+    padding: 0 44px;
     text-align: center;
     top: 0;
     transition: all 0.6s ease-in-out;
 }
 
-/* Left toggle panel: "Welcome Back" — hidden far left initially */
+.toggle-panel h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 1.85rem !important;
+    margin-bottom: 4px;
+    color: #fff !important;
+}
+
+.toggle-panel p {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 13px !important;
+    line-height: 1.7;
+    margin: 10px 0 !important;
+}
+
+/* Decorative accent line under panel text */
+.toggle-panel::after {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    margin-top: 6px;
+}
+
 .toggle-left {
     transform: translateX(-200%);
 }
@@ -302,7 +363,6 @@
     transform: translateX(0);
 }
 
-/* Right toggle panel: "New to ProctorAI?" — visible initially */
 .toggle-right {
     right: 0;
     transform: translateX(0);
@@ -313,46 +373,35 @@
 }
 
 /* =============================================
-   UTILITY
-   ============================================= */
-.hidden {
-    display: none !important;
-}
-
-.otp-section {
-    width: 100%;
-}
-
-/* =============================================
    AUTH FEEDBACK MESSAGES
    ============================================= */
 .auth-error {
     width: 100%;
-    background-color: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.35);
-    color: #f87171;
+    background: rgba(192, 22, 44, 0.07);
+    border: 1px solid rgba(192, 22, 44, 0.3);
+    color: #b01020;
     font-size: 12.5px;
     padding: 9px 13px;
-    border-radius: 7px;
+    border-radius: 8px;
     margin: 6px 0;
     text-align: left;
-    line-height: 1.4;
+    line-height: 1.45;
 }
 
 .auth-success {
     width: 100%;
-    background-color: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.35);
-    color: #4ade80;
+    background: rgba(30, 140, 60, 0.07);
+    border: 1px solid rgba(30, 140, 60, 0.3);
+    color: #157a30;
     font-size: 12.5px;
     padding: 9px 13px;
-    border-radius: 7px;
+    border-radius: 8px;
     margin: 6px 0;
     text-align: left;
-    line-height: 1.4;
+    line-height: 1.45;
 }
 
-/* Loading spinner */
+/* ── Loading spinner ── */
 .spin {
     animation: rotate 0.8s linear infinite;
     display: inline-block;
@@ -368,17 +417,14 @@
     }
 }
 
-.primary-action-btn:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    transform: none;
-}
-
 /* =============================================
    RESPONSIVE — MOBILE (≤ 768px)
-   Stack forms vertically, hide sliding panel.
    ============================================= */
 @media (max-width: 768px) {
+    .login-wrapper {
+        align-items: flex-start;
+        padding: 1.5rem 1rem 3rem;
+    }
 
     .container {
         min-height: unset;
@@ -386,12 +432,10 @@
         width: 95vw;
     }
 
-    /* Hide the toggle overlay on mobile */
     .toggle-container {
         display: none;
     }
 
-    /* Both forms become full-width stacked blocks */
     .form-container {
         position: relative;
         width: 100%;
@@ -401,15 +445,13 @@
     }
 
     .form-container form {
-        padding: 30px 24px;
+        padding: 32px 24px;
     }
 
-    /* Divider between sign-in and sign-up on mobile */
     .sign-up {
-        border-top: 1px solid var(--border-color);
+        border-top: 1px solid var(--l-border);
     }
 
-    /* Override active-state transforms so nothing slides */
     .container.active .sign-in,
     .container.active .sign-up {
         transform: none;
@@ -417,6 +459,6 @@
     }
 
     .container h1 {
-        font-size: 1.4rem;
+        font-size: 1.55rem;
     }
 }
