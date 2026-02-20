@@ -1,0 +1,200 @@
+/* Test Cards UI - Replicating Dashboard Design */
+.tests-section {
+    margin-top: 24px;
+}
+
+.tests-tabs {
+    display: flex;
+    gap: 32px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 24px;
+}
+
+.tests-tab {
+    padding: 12px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+}
+
+.tests-tab.active {
+    color: #ff4757;
+}
+
+.tests-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ff4757;
+}
+
+.tests-toolbar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+.search-input-wrapper input {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding-left: 8px;
+    color: #333;
+    background: transparent;
+}
+
+.search-input-wrapper input::placeholder {
+    color: #94a3b8;
+}
+
+.filter-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.filter-dropdown select {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #333;
+}
+
+.tests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.test-card {
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    border-radius: 8px;
+    padding: 20px 0 20px 0;
+    color: white;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.test-card-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 0 20px;
+}
+
+.test-card-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #ff7f50, #ff4757);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.test-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.test-card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px 20px;
+    gap: 16px;
+}
+
+.test-stat-col {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.test-stat-col:last-child {
+    border-right: none;
+}
+
+.test-stat-val {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.test-stat-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 4px;
+}
+
+.test-card-footer {
+    margin-top: 16px;
+    padding: 0 20px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.launch-btn {
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+}
+
+.launch-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 16px;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: white;
+}
