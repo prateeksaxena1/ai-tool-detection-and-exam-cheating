@@ -1,33 +1,100 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ScanFace } from 'lucide-react';
+import { ScanFace, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import '../styles/login.css';
 
 const Login = () => {
     const navigate = useNavigate();
     const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // Form states
+    // Form states — Sign In
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
 
+    // Form states — Sign Up
     const [signupName, setSignupName] = useState('');
     const [signupEmail, setSignupEmail] = useState('');
     const [signupPassword, setSignupPassword] = useState('');
+    const [signupError, setSignupError] = useState('');
+    const [signupSuccess, setSignupSuccess] = useState('');
 
-    const handleSignIn = (e) => {
+    /* ── SIGN IN ──────────────────────────────────── */
+    const handleSignIn = async (e) => {
         e.preventDefault();
-        if (loginEmail && loginPassword) {
-            // Simulate authentication
+        setLoginError('');
+        setLoading(true);
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: loginEmail,
+            password: loginPassword,
+        });
+
+        setLoading(false);
+
+        if (error) {
+            setLoginError(error.message);
+            return;
+        }
+
+        if (data?.user) {
             navigate('/dashboard');
         }
     };
 
-    const handleSignUp = (e) => {
+    /* ── SIGN UP ──────────────────────────────────── */
+    const handleSignUp = async (e) => {
         e.preventDefault();
-        if (signupName && signupEmail && signupPassword) {
-            // Simulate account creation
-            navigate('/dashboard');
+        setSignupError('');
+        setSignupSuccess('');
+        setLoading(true);
+
+        const { data, error } = await supabase.auth.signUp({
+            email: signupEmail,
+            password: signupPassword,
+            options: {
+                data: { full_name: signupName },
+            },
+        });
+
+        setLoading(false);
+
+        if (error) {
+            setSignupError(error.message);
+            return;
+        }
+
+        // Supabase sends a confirmation email by default.
+        // If email confirmations are disabled, data.user will be set immediately.
+        if (data?.user && data.user.identities?.length === 0) {
+            setSignupError('This email is already registered. Please sign in instead.');
+        } else {
+            setSignupSuccess('Account created! Check your email to confirm your account.');
+            setSignupName('');
+            setSignupEmail('');
+            setSignupPassword('');
+        }
+    };
+
+    /* ── FORGOT PASSWORD ──────────────────────────── */
+    const handleForgotPassword = async (e) => {
+        e.preventDefault();
+        if (!loginEmail) {
+            setLoginError('Enter your email above first, then click Forgot Password.');
+            return;
+        }
+        setLoading(true);
+        const { error } = await supabase.auth.resetPasswordForEmail(loginEmail, {
+            redirectTo: `${window.location.origin}/reset-password`,
+        });
+        setLoading(false);
+        if (error) {
+            setLoginError(error.message);
+        } else {
+            setLoginError('');
+            alert(`Password reset email sent to ${loginEmail}`);
         }
     };
 
@@ -35,7 +102,7 @@ const Login = () => {
         <div className="login-wrapper">
             <div className={`container ${isRightPanelActive ? 'active' : ''}`} id="container">
 
-                {/* SIGN UP PANEL */}
+                {/* ── SIGN UP PANEL ── */}
                 <div className="form-container sign-up">
                     <form onSubmit={handleSignUp}>
                         <h1>Create Account</h1>
@@ -47,6 +114,7 @@ const Login = () => {
                             value={signupName}
                             onChange={(e) => setSignupName(e.target.value)}
                             required
+                            disabled={loading}
                         />
                         <input
                             type="email"
@@ -54,25 +122,34 @@ const Login = () => {
                             value={signupEmail}
                             onChange={(e) => setSignupEmail(e.target.value)}
                             required
+                            disabled={loading}
                         />
                         <input
                             type="password"
-                            placeholder="Password"
+                            placeholder="Password (min 6 chars)"
                             value={signupPassword}
                             onChange={(e) => setSignupPassword(e.target.value)}
                             required
+                            minLength={6}
+                            disabled={loading}
                         />
+
+                        {/* Error / Success messages */}
+                        {signupError && <p className="auth-error">{signupError}</p>}
+                        {signupSuccess && <p className="auth-success">{signupSuccess}</p>}
 
                         <div className="face-recognition" onClick={() => navigate('/verification')}>
                             <ScanFace size={18} />
                             <span>Register your Face</span>
                         </div>
 
-                        <button type="submit" className="primary-action-btn">Sign Up</button>
+                        <button type="submit" className="primary-action-btn" disabled={loading}>
+                            {loading ? <Loader2 size={18} className="spin" /> : 'Sign Up'}
+                        </button>
                     </form>
                 </div>
 
-                {/* SIGN IN PANEL */}
+                {/* ── SIGN IN PANEL ── */}
                 <div className="form-container sign-in">
                     <form onSubmit={handleSignIn}>
                         <h1>Sign In</h1>
@@ -84,6 +161,7 @@ const Login = () => {
                             value={loginEmail}
                             onChange={(e) => setLoginEmail(e.target.value)}
                             required
+                            disabled={loading}
                         />
                         <input
                             type="password"
@@ -91,45 +169,41 @@ const Login = () => {
                             value={loginPassword}
                             onChange={(e) => setLoginPassword(e.target.value)}
                             required
+                            disabled={loading}
                         />
 
-                        {/* Note: OTP flow can be managed via state if needed later */}
-                        <div className="otp-section hidden">
-                            <button type="button" className="secondary-action-btn">Send OTP</button>
-                            <input type="text" placeholder="Enter OTP" />
-                        </div>
+                        {/* Error message */}
+                        {loginError && <p className="auth-error">{loginError}</p>}
 
                         <div className="face-recognition" onClick={() => navigate('/verification')}>
                             <ScanFace size={18} />
                             <span>Sign in with Face</span>
                         </div>
 
-                        <a href="#" className="forgot-password">Forgot password?</a>
+                        <a href="#" className="forgot-password" onClick={handleForgotPassword}>
+                            Forgot password?
+                        </a>
 
-                        <button type="submit" className="primary-action-btn">Sign In</button>
+                        <button type="submit" className="primary-action-btn" disabled={loading}>
+                            {loading ? <Loader2 size={18} className="spin" /> : 'Sign In'}
+                        </button>
                     </form>
                 </div>
 
-                {/* TOGGLE OVERLAY */}
+                {/* ── TOGGLE OVERLAY ── */}
                 <div className="toggle-container">
                     <div className="toggle">
                         <div className="toggle-panel toggle-left">
                             <h1>Welcome Back!</h1>
                             <p>Enter your personal details to access the ProctorAI dashboard and monitor your assessments.</p>
-                            <button
-                                className="hidden-btn"
-                                onClick={() => setIsRightPanelActive(false)}
-                            >
+                            <button className="hidden-btn" onClick={() => setIsRightPanelActive(false)}>
                                 Sign In
                             </button>
                         </div>
                         <div className="toggle-panel toggle-right">
                             <h1>New to ProctorAI?</h1>
                             <p>Register an account to experience next-generation, AI-powered secure examination environments.</p>
-                            <button
-                                className="hidden-btn"
-                                onClick={() => setIsRightPanelActive(true)}
-                            >
+                            <button className="hidden-btn" onClick={() => setIsRightPanelActive(true)}>
                                 Sign Up
                             </button>
                         </div>
