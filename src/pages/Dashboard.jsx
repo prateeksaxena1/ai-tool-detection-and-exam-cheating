@@ -5,6 +5,7 @@ import {
     Search, Bell, Eye, AlertTriangle, BarChart2, CheckCircle2, Download, Plus, X, BookOpen, Clock, ArrowLeft
 } from 'lucide-react';
 import { mockUsers, mockTests, generateCSVLog } from '../data/mockData';
+import { supabase } from '../lib/supabase';
 import '../styles/dashboard.css';
 import '../styles/admin.css';
 import '../styles/test-cards.css';
@@ -18,35 +19,105 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('CURRENT');
     const [tests, setTests] = useState(mockTests);
 
-    // Read the role passed from Login navigate state. Ensure strict fallback to 'student'
-    const role = location.state?.role === 'admin' ? 'admin' : 'student';
+    // Role: prefer location.state (just navigated), then localStorage (page refresh), then default
+    const role = location.state?.role
+        || localStorage.getItem('userRole')
+        || 'student';
+
+    const [isLoading, setIsLoading] = useState(true);
 
     // Optional: Log the recognized role for debugging
     useEffect(() => {
         console.log("Dashboard initialized with role:", role);
     }, [role]);
 
-    const handleCreateTest = (e) => {
+    // ── Fetch tests from Supabase; fall back to mockData if table is empty/missing ──
+    useEffect(() => {
+        const fetchTests = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('tests')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (!error && data && data.length > 0) {
+                    // Map Supabase column names to the shape the UI expects
+                    const mapped = data.map(t => ({
+                        id: t.id,
+                        name: t.name,
+                        date: t.date,
+                        endDate: t.end_date || t.date,
+                        duration: t.duration,
+                        candidatesEnrolled: t.candidates_enrolled ?? 0,
+                        status: t.status || 'UPCOMING',
+                        assessments: t.assessments ?? 0,
+                        assignments: t.assignments ?? 0,
+                        handsOn: t.hands_on ?? 0,
+                    }));
+                    setTests(mapped);
+                }
+                // If error or empty, mockTests stays as the default state
+            } catch (err) {
+                console.warn('Tests fetch failed, using mock data:', err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchTests();
+    }, []);
+
+    const handleCreateTest = async (e) => {
         e.preventDefault();
 
-        const newTestId = `t - ${Date.now()} `;
-        const newTest = {
-            id: newTestId,
+        const payload = {
             name: testForm.name,
             date: testForm.date,
-            endDate: testForm.date, // Simplifying for this form
+            end_date: testForm.date,
             duration: testForm.duration,
-            candidatesEnrolled: 0,
-            status: 'UPCOMING', // newly created tests are upcoming
+            candidates_enrolled: testForm.limit ? parseInt(testForm.limit) : 0,
+            status: 'UPCOMING',
             assessments: 0,
             assignments: 0,
-            handsOn: 0
+            hands_on: 0,
         };
 
-        setTests([...tests, newTest]);
+        // Try to persist in Supabase first
+        const { data: inserted, error } = await supabase
+            .from('tests')
+            .insert([payload])
+            .select()
+            .single();
+
+        const newTest = inserted
+            ? {
+                id: inserted.id,
+                name: inserted.name,
+                date: inserted.date,
+                endDate: inserted.end_date || inserted.date,
+                duration: inserted.duration,
+                candidatesEnrolled: inserted.candidates_enrolled ?? 0,
+                status: inserted.status || 'UPCOMING',
+                assessments: inserted.assessments ?? 0,
+                assignments: inserted.assignments ?? 0,
+                handsOn: inserted.hands_on ?? 0,
+            }
+            : {   // fallback: local-only (table may not exist yet)
+                id: `t-${Date.now()}`,
+                name: testForm.name,
+                date: testForm.date,
+                endDate: testForm.date,
+                duration: testForm.duration,
+                candidatesEnrolled: 0,
+                status: 'UPCOMING',
+                assessments: 0, assignments: 0, handsOn: 0,
+            };
+
+        if (error) console.warn('Supabase insert failed, test saved locally only:', error.message);
+
+        setTests(prev => [...prev, newTest]);
         setIsModalOpen(false);
         setTestForm({ name: '', date: '', duration: '', limit: '' });
-        setActiveTab('UPCOMING'); // Switch tab to see exactly what we just made
+        setActiveTab('UPCOMING');
     };
 
     return (

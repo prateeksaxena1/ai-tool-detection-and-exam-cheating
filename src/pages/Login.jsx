@@ -41,11 +41,10 @@ const Login = () => {
         }
 
         if (data?.user) {
-            // Check metadata if set, else fallback. For demo purposes, check email.
-            let userRole = data.user.user_metadata?.role;
-            if (!userRole) {
-                userRole = loginEmail.includes('admin') ? 'admin' : 'student';
-            }
+            // Read role from user_metadata (set at signup)
+            const userRole = data.user.user_metadata?.role || 'student';
+            // Persist so Dashboard survives refresh / direct navigation
+            localStorage.setItem('userRole', userRole);
             navigate('/dashboard', { state: { role: userRole } });
         }
     };
@@ -78,7 +77,8 @@ const Login = () => {
             setSignupError('This email is already registered. Please sign in instead.');
         } else if (data?.user) {
             setSignupSuccess('Account created! Routing to dashboard...');
-            // Immediately route to the dashboard with the explicitly chosen role
+            // Persist role so it survives refresh
+            localStorage.setItem('userRole', signupRole);
             navigate('/dashboard', { state: { role: signupRole } });
         }
     };
